@@ -1,0 +1,27 @@
+{
+    "name": "massfice/social-app",
+    "description": "Packege created for my diploma, but feel free to use it if you want.",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Adrian Larysz",
+            "email": "adrian.marian.tomasz.larysz@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Massfice\\SocialApp\\": "src/",
+            "Massfice\\SocialApp\\Usage\\": "usage/" 
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Massfice\\SocialApp\\DevMode\\": "dev/"
+        }
+    },
+    "require": {
+        "massfice/storage": "^1.0",
+        "smarty/smarty": "^3.1"
+    }
+}
