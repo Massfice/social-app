@@ -37,6 +37,26 @@ class cCleanUrl {
             else $data[] = $cleans[$i];
         }
 
+        foreach($data as $k => $d) {
+            $buff = \explode(",",$d);
+
+            foreach($buff as $j => $b) {
+                $buff2 = $buff;
+                unset($buff2[$j]);
+
+                $temp = \explode(".",$b);
+                if(isset($temp[0]) && isset($temp[1])) {
+                    $buff2[$temp[0]] = $temp[1];
+                } else if(isset($temp[0])) {
+                    $buff2[$j] = $temp[0];
+                }
+
+                $buff = $buff2;
+            }
+
+            $data[$k] = $buff;
+        }
+
         // DevHelper::dump($data);
         // var_dump($data);
         $shelf->addData("data",$data);
@@ -51,10 +71,21 @@ class cCleanUrl {
         return Storage::getInstance()->getShelf("System_CleanUrl")->getData("type");
     }
 
-    public static function get($key) : ?String {
+    public static function get(Int $key, bool $array = false) {
         $data = Storage::getInstance()->getShelf("System_CleanUrl")->getData("data");
 
-        return isset($data[$key]) && is_string($data[$key]) ? $data[$key] : null; 
+        if(!$array) {
+            $data = 
+                isset($data[$key]) && 
+                is_array($data[$key]) &&
+                isset($data[$key][array_keys($data[$key])[0]]) ? 
+                $data[$key][array_keys($data[$key])[0]] : 
+                null;
+        } else { 
+            $data = isset($data[$key]) && is_array($data[$key]) ? $data[$key] : null;
+        }
+
+        return $data; 
 
     }
 

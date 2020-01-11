@@ -5,34 +5,34 @@ namespace Massfice\SocialApp;
 use Massfice\SocialApp\DevMode\DevHelper; //Only for dev mode
 
 use Massfice\SocialApp\Usage\Action\cActionFactoryFactory;
-use Massfice\SocialApp\Usage\Config\cAppConfig;
 
 class cSocialApp {
 
     private static function action(array $okta) {
-        $role = cRoleManager::getRole($okta);
+        $role = cGeneralRoleManager::getRole();
         $factory = cActionFactoryFactory::create($role);
-        $action = $factory->create(cCleanUrl::getAction());
-        
-        $data = $action->load(cAppConfig::config(),$okta);
-        $valid = $action->validate($data);
-        $data = $action->execute($data,$valid);
-        $display = $action->display($data);
 
-        http_response_code($display->code);
-        header("Content-Type: ".$display->type);
-        if($display->code > 103 && $display->code < 300) echo $display->display;
+        $manager = fManagerFactory::create(cCleanUrl::getType());
+
+        $action = $manager->createAction($factory,cCleanUrl::getAction());
+        $response = $manager->executeAction($action,$okta);
+
+        http_response_code($response->code->code());
+        $response->code->headers();
+        header("Content-Type: ".$response->type);
+        echo $response->display;
 
     }
 
-    private static function init() {
+    private static function init(array $okta) {
         cCleanUrl::init();
         cSmarty::init();
+        cGeneralRoleManager::init($okta);
     }
 
     public static function start() {
         $okta = cOkta::run();
-        self::init();
+        self::init($okta);
         self::action($okta);
 
         // header("Content-Type: application/json");
